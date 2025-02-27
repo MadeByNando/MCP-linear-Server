@@ -158,6 +158,13 @@ const server = new McpServer({
           teamId: { type: 'string', description: 'Team ID to get workflow states for' }
         },
         required: ['teamId']
+      },
+      'linear_list_projects': {
+        description: 'Get a list of all projects available with their IDs',
+        parameters: {
+          teamId: { type: 'string', description: 'Optional team ID to filter projects by team' },
+          limit: { type: 'number', description: 'Max number of projects to return', default: 50 }
+        }
       }
     }
   }
@@ -497,6 +504,79 @@ server.tool(
       };
     } catch (error) {
       handleError(error, 'Failed to fetch workflow states');
+      throw error;
+    }
+  }
+);
+
+// Add new tool to list all projects
+server.tool(
+  'linear_list_projects',
+  {
+    teamId: z.string().optional().describe('Optional team ID to filter projects by team'),
+    limit: z.number().default(50).describe('Max number of projects to return')
+  },
+  async (params) => {
+    try {
+      debugLog('Fetching projects with params:', params);
+      
+      // Get projects with timeout
+      let projects;
+      
+      if (params.teamId) {
+        // If teamId is provided, first get the team
+        const team = await withTimeout(
+          linearClient.team(params.teamId),
+          API_TIMEOUT_MS,
+          'Fetching team'
+        );
+        
+        // Then get projects for this team
+        projects = await withTimeout(
+          team.projects({ first: params.limit }),
+          API_TIMEOUT_MS,
+          'Fetching projects for team'
+        );
+      } else {
+        // Get all projects
+        projects = await withTimeout(
+          linearClient.projects({ first: params.limit }),
+          API_TIMEOUT_MS,
+          'Fetching all projects'
+        );
+      }
+      
+      if (!projects.nodes.length) {
+        return {
+          content: [{
+            type: 'text',
+            text: params.teamId 
+              ? `No projects found for team ID: ${params.teamId}.` 
+              : 'No projects found.'
+          }]
+        };
+      }
+
+      debugLog(`Found ${projects.nodes.length} projects`);
+
+      // Create a simplified list of projects with basic information
+      const projectsList = projects.nodes.map(project => ({
+        id: project.id,
+        name: project.name,
+        description: project.description || 'No description',
+        url: project.url,
+        startedAt: project.startedAt ? new Date(project.startedAt).toLocaleDateString() : 'Not set',
+        targetDate: project.targetDate ? new Date(project.targetDate).toLocaleDateString() : 'Not set'
+      }));
+
+      return {
+        content: [{
+          type: 'text',
+          text: `Projects (${projects.nodes.length}):\n${JSON.stringify(projectsList, null, 2)}`
+        }]
+      };
+    } catch (error) {
+      handleError(error, 'Failed to fetch projects');
       throw error;
     }
   }

@@ -52,6 +52,13 @@ Get all available workflow states (statuses) for a team:
 
 - `teamId` (required): Team ID to get workflow states for
 
+### linear_list_projects
+
+Get a list of all projects available with their IDs:
+
+- `teamId` (optional): Team ID to filter projects by team
+- `limit` (optional, default: 50): Max number of projects to return
+
 ## Developer Setup
 
 1. Get your Linear API key from Linear's settings > API section
@@ -182,3 +189,9 @@ linear_get_workflow_states
 ```
 
 Get all available workflow states (statuses) for a specific team.
+
+```http
+linear_list_projects
+```
+
+Get a list of all projects available with their IDs, optionally filtered by team.
