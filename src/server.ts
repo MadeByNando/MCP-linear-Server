@@ -115,7 +115,8 @@ const server = new McpServer({
           title: { type: 'string', description: 'Issue title' },
           description: { type: 'string', description: 'Issue description (markdown supported)' },
           teamId: { type: 'string', description: 'Team ID to create issue in' },
-          priority: { type: 'number', description: 'Priority level (0-4)', minimum: 0, maximum: 4 },
+          // priority: { type: 'number', description: 'Priority level (0-4)', minimum: 0, maximum: 4 },
+          projectId: { type: 'string', description: 'ID of the project to associate the issue with' },
           stateId: { type: 'string', description: 'ID of the workflow state to set for the issue' }
         },
         required: ['title', 'teamId']
@@ -178,7 +179,8 @@ server.tool(
     title: z.string().describe('Issue title'),
     description: z.string().optional().describe('Issue description (markdown supported)'),
     teamId: z.string().describe('Team ID to create issue in'),
-    priority: z.number().min(0).max(4).optional().describe('Priority level (0-4)'),
+    // priority: z.number().min(0).max(4).optional().describe('Priority level (0-4)'),
+    projectId: z.string().optional().describe('ID of the project to associate the issue with'),
     stateId: z.string().optional().describe('ID of the workflow state to set for the issue')
   },
   async (params) => {
@@ -188,6 +190,7 @@ server.tool(
       const issueData = await issueResult.issue;
       
       if (!issueData) {
+        console.error('Issue creation succeeded but returned no data');
         throw new Error('Issue creation succeeded but returned no data');
       }
 
