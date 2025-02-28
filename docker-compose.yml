@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  mcp-linear-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-linear-server
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+    # If you need to expose a port, uncomment the following line
+    # ports:
+    #   - "3000:3000" 

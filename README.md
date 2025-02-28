@@ -96,6 +96,44 @@ Get a list of all projects available with their IDs:
     npm run inspect
     ```
 
+## Docker Setup
+
+You can also run this application using Docker:
+
+1. Make sure you have Docker and Docker Compose installed on your system
+2. Create a `.env` file with your Linear API key as described above
+3. Build and start the container:
+
+    ```bash
+    # Build and start the container in detached mode
+    docker-compose up -d
+
+    # View logs
+    docker-compose logs -f
+
+    # Stop the container
+    docker-compose down
+    ```
+
+4. The server will be running inside the container and will automatically restart unless explicitly stopped
+
+### Docker Development
+
+For development with Docker:
+
+```bash
+# Build the image
+docker build -t mcp-linear-server .
+
+# Run in development mode with auto-reload
+docker run -it --rm \
+  -v $(pwd):/app \
+  -v /app/node_modules \
+  --env-file .env \
+  mcp-linear-server \
+  npm run dev
+```
+
 ## Technical Details
 
 - Built with TypeScript and the Model Context Protocol SDK
@@ -127,6 +165,11 @@ For the complete list of dependencies, see `package.json`.
 
 ## Use in Cursor
 
+
+To use this server in Cursor, you can add it as a MCP server.
+
+### Without Docker
+
 > **Warning**
 > Make sure to set the `LINEAR_API_KEY` directly in the command when adding the MCP server in Cursor. This is crucial for the server to authenticate and interact with the Linear API correctly. Failure to do so will result in authentication errors and the server will not function as expected.
 >
@@ -136,7 +179,19 @@ For the complete list of dependencies, see `package.json`.
 > env LINEAR_API_KEY=your_linear_api_key node /path/to/your/mcp-linear-server/dist/server.js
 > ```
 
-To use this server in Cursor, you can add it as a MCP server.
+1. Open the Cursor settings menu
+2. Go to the "MCP Servers" section
+3. Click "Add MCP Server"
+4. Enter the following details:
+    - Name: linear-mcp-server
+    - Transport type: command
+    - Command: env LINEAR_API_KEY=your_linear_api_key node /path/to/your/mcp-linear-server/dist/server.js
+
+5. Click "Save"
+
+6. You should now see the Linear tool in the list of tools in Cursor.
+
+### With Docker
 
 1. Open the Cursor settings menu
 2. Go to the "MCP Servers" section
@@ -144,7 +199,7 @@ To use this server in Cursor, you can add it as a MCP server.
 4. Enter the following details:
     - Name: linear-mcp-server
     - Transport type: command
-    - Command: env LINEAR_API_KEY=<your_linear_api_key> node <path/to/your/mcp-linear-server/dist/server.js>
+    - Command: docker exec -i mcp-linear-server node dist/server.js
 
 5. Click "Save"
 
