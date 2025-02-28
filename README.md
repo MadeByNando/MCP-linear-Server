@@ -62,19 +62,26 @@ Get a list of all projects available with their IDs:
 ## Developer Setup
 
 1. Get your Linear API key from Linear's settings > API section
-2. Create a `.env` file in the project root:
 
-    ```bash
-    LINEAR_API_KEY=your_api_key_here
-    ```
+2. Copiez le fichier d'exemple d'environnement :
 
-3. Install dependencies:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Modifiez le fichier `.env` et ajoutez votre clé API Linear :
+
+   ```bash
+   LINEAR_API_KEY=votre_clé_api_linear_ici
+   ```
+
+4. Install dependencies:
 
     ```bash
     npm install
     ```
 
-4. Start the server:
+5. Start the server:
 
     ```bash
     # Development mode with auto-reload
@@ -250,3 +257,19 @@ linear_list_projects
 ```
 
 Get a list of all projects available with their IDs, optionally filtered by team.
+
+## Configuration
+
+1. Copiez le fichier d'exemple d'environnement :
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Modifiez le fichier `.env` et ajoutez votre clé API Linear :
+
+   ```bash
+   LINEAR_API_KEY=votre_clé_api_linear_ici
+   ```
+
+3. Vous pouvez maintenant lancer le serveur avec ou sans Docker comme décrit dans les sections ci-dessus.
