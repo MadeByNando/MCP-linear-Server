@@ -103,7 +103,7 @@ Get a list of all projects available with their IDs:
     npm run inspect
     ```
 
-## Docker Setup
+## Docker Setup if project cloned from GitHub
 
 You can also run this application using Docker:
 
@@ -123,6 +123,40 @@ You can also run this application using Docker:
     ```
 
 4. The server will be running inside the container and will automatically restart unless explicitly stopped
+
+## Using Docker (Simplified method with docker-compose)
+
+1. Create a `.env` file with your Linear API key:
+
+   ```bash
+   LINEAR_API_KEY=your_linear_api_key_here
+   ```
+
+2. Create a `docker-compose.yml` file:
+
+   ```yaml
+   version: '3.8'
+   
+   services:
+     mcp-linear-server:
+       image: madebynando/mcp-linear-server:latest
+       container_name: mcp-linear-server
+       restart: unless-stopped
+       env_file:
+         - .env
+       volumes:
+         - ./logs:/app/logs
+   ```
+
+3. Start the container:
+
+   ```bash
+   docker-compose up -d
+   ```
+
+4. To configure Cursor, use:
+   - Transport type: command
+   - Command: docker exec -i mcp-linear-server node dist/server.js
 
 ### Docker Development
 
@@ -171,7 +205,6 @@ The server includes comprehensive error handling:
 For the complete list of dependencies, see `package.json`.
 
 ## Use in Cursor
-
 
 To use this server in Cursor, you can add it as a MCP server.
 
@@ -257,4 +290,3 @@ linear_list_projects
 ```
 
 Get a list of all projects available with their IDs, optionally filtered by team.
-
